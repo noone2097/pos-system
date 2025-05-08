@@ -11,13 +11,8 @@ class MonthlySalesChart extends ChartWidget
     protected static ?string $heading = 'Monthly Sales Growth';
 
     protected static ?string $pollingInterval = null;
-
     protected static bool $isLazy = false;
-
-    // Set sort order to ensure side by side layout
     protected static ?int $sort = 2;
-
-    // Set a default filter
     protected static ?array $options = [
         'plugins' => [
             'legend' => [
@@ -62,8 +57,6 @@ class MonthlySalesChart extends ChartWidget
             ],
         ],
     ];
-
-    // Define chart colors
     protected function getColors(): array
     {
         return [
@@ -74,7 +67,6 @@ class MonthlySalesChart extends ChartWidget
 
     protected function getData(): array
     {
-        // Get monthly sales data
         $monthlyData = $this->getMonthlyData();
 
         return [
@@ -116,8 +108,6 @@ class MonthlySalesChart extends ChartWidget
     {
         return 'line';
     }
-
-    // Generate dummy data for demonstration
     private function getMonthlyData(): array
     {
         $now = Carbon::now();
@@ -137,22 +127,18 @@ class MonthlySalesChart extends ChartWidget
             ->orderBy('month')
             ->get();
 
-        // Prepare data arrays
         $months = [];
-        $thisYearData = array_fill(0, 6, 0); // First 6 months of this year
-        $lastYearData = array_fill(0, 6, 0); // First 6 months of last year
+        $thisYearData = array_fill(0, 6, 0);
+        $lastYearData = array_fill(0, 6, 0);
 
-        // Get month names for the first 6 months
         for ($i = 0; $i < 6; $i++) {
             $month = Carbon::create(null, $i + 1, 1)->format('M');
             $months[] = $month;
         }
 
-        // Fill in the actual data
         foreach ($monthlySales as $sale) {
             $monthIndex = $sale->month - 1;
 
-            // Only include the first 6 months
             if ($monthIndex >= 6) {
                 continue;
             }
@@ -164,7 +150,6 @@ class MonthlySalesChart extends ChartWidget
             }
         }
 
-        // Fill with sample data if no real data exists
         if (array_sum($thisYearData) == 0 && array_sum($lastYearData) == 0) {
             $thisYearData = [8500, 11200, 9800, 15600, 16200, 14200];
             $lastYearData = [7800, 8600, 9100, 12500, 14000, 13300];
@@ -179,6 +164,6 @@ class MonthlySalesChart extends ChartWidget
 
     public function getColumnSpan(): int|string|array
     {
-        return 1; // Take up a single column to display side by side
+        return 1;
     }
 }

@@ -9,16 +9,9 @@ use Illuminate\Support\Facades\DB;
 class SalesChart extends ChartWidget
 {
     protected static ?string $heading = 'Weekly Sales Overview';
-
-    // Enable animation and interaction
     protected static ?string $pollingInterval = null;
-
     protected static bool $isLazy = false;
-
-    // Set sort order to ensure side by side layout
     protected static ?int $sort = 1;
-
-    // Set chart options
     protected function getOptions(): array
     {
         return [
@@ -47,7 +40,6 @@ class SalesChart extends ChartWidget
 
     protected function getData(): array
     {
-        // Get sales data for the last 7 days
         $sales = $this->getSalesData();
 
         return [
@@ -83,11 +75,9 @@ class SalesChart extends ChartWidget
 
     private function getSalesData()
     {
-        // Get the last 7 days
         $startDate = Carbon::now()->subDays(6)->startOfDay();
         $endDate = Carbon::now()->endOfDay();
 
-        // Get daily totals
         $sales = DB::table('sales')
             ->select(
                 DB::raw('DATE(created_at) as date'),
@@ -107,7 +97,6 @@ class SalesChart extends ChartWidget
                 ];
             });
 
-        // Fill in any missing days with zero values
         $result = collect();
         $currentDate = $startDate->copy();
 
@@ -133,6 +122,6 @@ class SalesChart extends ChartWidget
 
     public function getColumnSpan(): int|string|array
     {
-        return 1; // Take up a single column in the grid
+        return 1; 
     }
 }
