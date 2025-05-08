@@ -24,7 +24,7 @@ class ProductSeeder extends Seeder
                 $sum += $number[$i] * ($i % 2 ? 3 : 1);
             }
             $checkDigit = (10 - ($sum % 10)) % 10;
-            $barcode = $number . $checkDigit;
+            $barcode = $number.$checkDigit;
 
             $exists = Product::where('barcode', $barcode)->exists();
         } while ($exists);
@@ -40,26 +40,26 @@ class ProductSeeder extends Seeder
                 'Soft Drinks',
                 'Coffee',
                 'Tea',
-                'Energy Drinks'
+                'Energy Drinks',
             ],
             'Snacks' => [
                 'Chips',
                 'Cookies',
                 'Candies',
-                'Chocolates'
+                'Chocolates',
             ],
             'Groceries' => [
                 'Canned Goods',
                 'Instant Noodles',
                 'Rice',
-                'Condiments'
+                'Condiments',
             ],
             'Personal Care' => [
                 'Soap',
                 'Shampoo',
                 'Toothpaste',
-                'Deodorant'
-            ]
+                'Deodorant',
+            ],
         ];
 
         foreach ($categories as $mainCategory => $subCategories) {
@@ -67,7 +67,7 @@ class ProductSeeder extends Seeder
                 $category = Category::create([
                     'name' => $subCategory,
                     'slug' => Str::slug($subCategory),
-                    'description' => "Various {$subCategory} products"
+                    'description' => "Various {$subCategory} products",
                 ]);
 
                 // Create 5 products for each category

@@ -21,7 +21,7 @@ class Customer extends Model
     {
         do {
             $number = mt_rand(100000, 999999);
-            $name = "Customer " . $number;
+            $name = 'Customer '.$number;
             $exists = self::where('name', $name)->exists();
         } while ($exists);
 

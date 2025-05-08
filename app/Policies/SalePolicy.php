@@ -51,7 +51,7 @@ class SalePolicy
 
         // Cashiers can void their own sales within 24 hours
         if ($user->hasRole('cashier')) {
-            return $sale->user_id === $user->id && 
+            return $sale->user_id === $user->id &&
                    $sale->created_at->isAfter(now()->subHours(24));
         }
 

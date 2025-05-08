@@ -79,12 +79,12 @@ class CustomerResource extends Resource
                 //
             ]);
     }
-    
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListCustomers::route('/'),
             'view' => Pages\ViewCustomer::route('/{record}'),
         ];
-    }    
+    }
 }

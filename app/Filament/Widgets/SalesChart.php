@@ -2,7 +2,6 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Sale;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Support\Facades\DB;
@@ -10,14 +9,15 @@ use Illuminate\Support\Facades\DB;
 class SalesChart extends ChartWidget
 {
     protected static ?string $heading = 'Weekly Sales Overview';
-    
+
     // Enable animation and interaction
     protected static ?string $pollingInterval = null;
+
     protected static bool $isLazy = false;
-    
+
     // Set sort order to ensure side by side layout
     protected static ?int $sort = 1;
-    
+
     // Set chart options
     protected function getOptions(): array
     {
@@ -49,7 +49,7 @@ class SalesChart extends ChartWidget
     {
         // Get sales data for the last 7 days
         $sales = $this->getSalesData();
-        
+
         return [
             'datasets' => [
                 [
@@ -80,13 +80,13 @@ class SalesChart extends ChartWidget
     {
         return 'bar';
     }
-    
+
     private function getSalesData()
     {
         // Get the last 7 days
         $startDate = Carbon::now()->subDays(6)->startOfDay();
         $endDate = Carbon::now()->endOfDay();
-        
+
         // Get daily totals
         $sales = DB::table('sales')
             ->select(
@@ -99,21 +99,22 @@ class SalesChart extends ChartWidget
             ->get()
             ->map(function ($item) {
                 $date = Carbon::parse($item->date);
+
                 return [
                     'date' => $date->format('Y-m-d'),
                     'date_label' => $date->format('D, M j'), // e.g. "Mon, Jan 1"
                     'total' => (float) $item->total,
                 ];
             });
-        
+
         // Fill in any missing days with zero values
         $result = collect();
         $currentDate = $startDate->copy();
-        
+
         while ($currentDate->lte($endDate)) {
             $dateStr = $currentDate->format('Y-m-d');
             $saleForDay = $sales->firstWhere('date', $dateStr);
-            
+
             if ($saleForDay) {
                 $result->push($saleForDay);
             } else {
@@ -123,13 +124,13 @@ class SalesChart extends ChartWidget
                     'total' => 0,
                 ]);
             }
-            
+
             $currentDate->addDay();
         }
-        
+
         return $result;
     }
-    
+
     public function getColumnSpan(): int|string|array
     {
         return 1; // Take up a single column in the grid

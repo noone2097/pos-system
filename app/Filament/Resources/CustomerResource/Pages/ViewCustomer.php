@@ -81,7 +81,7 @@ class ViewCustomer extends ViewRecord
                                 return $record->sales()->latest()->take(5)->get();
                             }),
                     ]),
-                
+
                 Infolists\Components\Section::make('Products Purchased')
                     ->schema([
                         Infolists\Components\TextEntry::make('purchased_products')
@@ -92,45 +92,45 @@ class ViewCustomer extends ViewRecord
                                         ->where('customer_id', $record->id)
                                         ->pluck('id')
                                         ->toArray();
-                                    
+
                                     if (empty($saleIds)) {
-                                        return "No sales found for this customer.";
+                                        return 'No sales found for this customer.';
                                     }
-                                    
+
                                     $items = DB::table('sale_items')
                                         ->whereIn('sale_id', $saleIds)
                                         ->get();
-                                    
+
                                     if ($items->isEmpty()) {
-                                        return "No items found in customer sales.";
+                                        return 'No items found in customer sales.';
                                     }
-                                    
+
                                     $products = [];
                                     foreach ($items as $item) {
                                         $name = $item->product_name ?? 'Unknown';
-                                        if (!isset($products[$name])) {
+                                        if (! isset($products[$name])) {
                                             $products[$name] = [
                                                 'quantity' => 0,
-                                                'total' => 0
+                                                'total' => 0,
                                             ];
                                         }
-                                        $products[$name]['quantity'] += (int)$item->quantity;
-                                        $products[$name]['total'] += (float)$item->subtotal;
+                                        $products[$name]['quantity'] += (int) $item->quantity;
+                                        $products[$name]['total'] += (float) $item->subtotal;
                                     }
-                                    
-                                    uasort($products, function($a, $b) {
+
+                                    uasort($products, function ($a, $b) {
                                         return $b['quantity'] <=> $a['quantity'];
                                     });
-                                    
+
                                     $result = [];
                                     foreach ($products as $name => $data) {
-                                        $result[] = "<strong>{$name}</strong> - {$data['quantity']} units (₱" . 
-                                                   number_format($data['total'], 2) . ")";
+                                        $result[] = "<strong>{$name}</strong> - {$data['quantity']} units (₱".
+                                                   number_format($data['total'], 2).')';
                                     }
-                                    
+
                                     return implode('<br>', $result);
                                 } catch (\Exception $e) {
-                                    return "Error: " . $e->getMessage();
+                                    return 'Error: '.$e->getMessage();
                                 }
                             })
                             ->html(),

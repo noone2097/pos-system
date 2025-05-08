@@ -3,11 +3,9 @@
 namespace App\Filament\Resources\SaleResource\Pages;
 
 use App\Filament\Resources\SaleResource;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
 
 class CreateSale extends CreateRecord
 {
@@ -21,7 +19,7 @@ class CreateSale extends CreateRecord
     protected function afterCreate(): void
     {
         $sale = $this->record;
-        
+
         foreach ($sale->items as $item) {
             $item->calculateTotals();
         }
@@ -43,7 +41,7 @@ class CreateSale extends CreateRecord
         foreach ($data['items'] as $item) {
             $itemSubtotal = $item['quantity'] * $item['unit_price'];
             $itemTax = $itemSubtotal * config('pos.tax_rate', 0.12);
-            
+
             $subtotal += $itemSubtotal;
             $tax += $itemTax;
         }
@@ -93,7 +91,7 @@ class CreateSale extends CreateRecord
     private function calculateTotals(Get $get, Set $set): void
     {
         $items = $get('items');
-        if (!$items) {
+        if (! $items) {
             return;
         }
 

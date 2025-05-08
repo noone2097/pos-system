@@ -31,7 +31,7 @@ class ProductResource extends Resource
                 $sum += $number[$i] * ($i % 2 ? 3 : 1);
             }
             $checkDigit = (10 - ($sum % 10)) % 10;
-            $barcode = $number . $checkDigit;
+            $barcode = $number.$checkDigit;
 
             $exists = Product::where('barcode', $barcode)->exists();
         } while ($exists);
@@ -123,7 +123,7 @@ class ProductResource extends Resource
                     ->icon('heroicon-o-printer')
                     ->action(function ($records) {
                         return redirect()->route('products.barcodes.print', [
-                            'products' => $records->pluck('id')->toArray()
+                            'products' => $records->pluck('id')->toArray(),
                         ]);
                     }),
                 Tables\Actions\DeleteBulkAction::make(),

@@ -19,11 +19,11 @@ class Dashboard extends BaseDashboard
                 ->icon('heroicon-m-plus'),
         ];
     }
-    
+
     public function getWidgets(): array
     {
         Log::info('Loading dashboard widgets');
-        
+
         return [
             StatsOverview::class,
             InventoryStats::class,

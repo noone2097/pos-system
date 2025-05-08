@@ -3,14 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SaleResource\Pages;
-use App\Models\Sale;
 use App\Models\Product;
+use App\Models\Sale;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class SaleResource extends Resource
 {
@@ -68,10 +67,10 @@ class SaleResource extends Resource
                                             ->searchable()
                                             ->preload()
                                             ->afterStateUpdated(function ($state, Forms\Set $set, ?string $old) {
-                                                if (!$state || $state === $old) {
+                                                if (! $state || $state === $old) {
                                                     return;
                                                 }
-                                                
+
                                                 $product = Product::where('id', $state)->first();
                                                 if ($product) {
                                                     $set('product_name', $product->name);

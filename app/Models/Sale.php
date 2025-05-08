@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 
 class Sale extends Model
 {
@@ -46,7 +45,7 @@ class Sale extends Model
         $latestSale = self::latest()->first();
         $lastNumber = $latestSale ? intval(substr($latestSale->reference, 4)) : 0;
         $nextNumber = str_pad($lastNumber + 1, 6, '0', STR_PAD_LEFT);
-        
-        return 'INV-' . $nextNumber;
+
+        return 'INV-'.$nextNumber;
     }
 }

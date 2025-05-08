@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleAndPermissionSeeder extends Seeder
 {
@@ -20,25 +20,25 @@ class RoleAndPermissionSeeder extends Seeder
             'create products',
             'edit products',
             'delete products',
-            
+
             // Category permissions
             'view categories',
             'create categories',
             'edit categories',
             'delete categories',
-            
+
             // Customer permissions
             'view customers',
             'create customers',
             'edit customers',
             'delete customers',
-            
+
             // Sale permissions
             'view sales',
             'create sales',
             'void sales',
             'view reports',
-            
+
             // User management
             'view users',
             'create users',

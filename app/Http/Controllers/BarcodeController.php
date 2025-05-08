@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use Milon\Barcode\DNS1D;
 use Illuminate\Http\Request;
+use Milon\Barcode\DNS1D;
 
 class BarcodeController extends Controller
 {
@@ -18,7 +18,7 @@ class BarcodeController extends Controller
 
         return view('barcodes.print', [
             'product' => $product,
-            'barcode' => $barcode
+            'barcode' => $barcode,
         ]);
     }
 
@@ -27,7 +27,7 @@ class BarcodeController extends Controller
         // Force reload products to ensure fresh data
         $products = Product::whereIn('id', $request->input('products', []))
             ->get();
-            
+
         $barcodes = [];
 
         foreach ($products as $product) {
@@ -36,7 +36,7 @@ class BarcodeController extends Controller
 
         return view('barcodes.print', [
             'products' => $products,
-            'barcodes' => $barcodes
+            'barcodes' => $barcodes,
         ]);
     }
 }

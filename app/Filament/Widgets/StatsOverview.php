@@ -13,21 +13,21 @@ class StatsOverview extends BaseWidget
     {
         $isAdmin = auth()->user()->hasRole('admin');
         $username = auth()->user()->name;
-        
-        Log::info("StatsOverview Widget Loaded", [
+
+        Log::info('StatsOverview Widget Loaded', [
             'user' => $username,
             'is_admin' => $isAdmin,
         ]);
-        
+
         return [
-            Stat::make('Today\'s Sales', 
-                '₱' . number_format(Sale::whereDate('created_at', today())->sum('total'), 2))
+            Stat::make('Today\'s Sales',
+                '₱'.number_format(Sale::whereDate('created_at', today())->sum('total'), 2))
                 ->description('Total sales for today')
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->chart([7, 4, 6, 8, 5, 3, 8])
                 ->color('success'),
 
-            Stat::make('Today\'s Sale Transactions', 
+            Stat::make('Today\'s Sale Transactions',
                 Sale::whereDate('created_at', today())->count())
                 ->description('Number of sale transactions today')
                 ->descriptionIcon('heroicon-m-shopping-cart')
@@ -36,7 +36,8 @@ class StatsOverview extends BaseWidget
 
             Stat::make('Average Sale', function () {
                 $avg = Sale::whereDate('created_at', today())->avg('total') ?? 0;
-                return '₱' . number_format($avg, 2);
+
+                return '₱'.number_format($avg, 2);
             })
                 ->description('Average sale amount today')
                 ->descriptionIcon('heroicon-m-calculator')

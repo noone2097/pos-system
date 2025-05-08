@@ -2,16 +2,16 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
-use App\Models\Customer;
-use Filament\Pages\Page;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 
@@ -32,18 +32,26 @@ class Pos extends Page implements HasForms
     protected static ?int $navigationSort = 1;
 
     public ?array $cart = [];
+
     public $scannedBarcode = '';
+
     public $payment_method = null;
+
     public $payment_amount = 0;
+
     public $total = 0;
+
     private $lastScannedBarcode = '';
+
     private $lastScannedTime = 0;
+
     private const SCAN_COOLDOWN = 2;
-    private $modalOpen = false; 
+
+    private $modalOpen = false;
 
     public static function shouldRegisterNavigation(): bool
     {
-        return auth()->user()->hasRole('cashier') && !auth()->user()->hasRole('admin');
+        return auth()->user()->hasRole('cashier') && ! auth()->user()->hasRole('admin');
     }
 
     protected function getHeaderActions(): array
@@ -60,21 +68,22 @@ class Pos extends Page implements HasForms
 
     public function mount(): void
     {
-        if (!auth()->user()->hasRole('cashier')) {
+        if (! auth()->user()->hasRole('cashier')) {
             redirect()->to('/loon');
         }
-        
+
         $this->cart = session('cart', []);
-        
+
         $this->cart = collect($this->cart)->map(function ($item) {
-            if (!isset($item['unique_id'])) {
+            if (! isset($item['unique_id'])) {
                 $item['unique_id'] = (string) Str::uuid();
             }
+
             return $item;
         })->toArray();
-        
+
         session(['cart' => $this->cart]);
-        
+
         $this->calculateTotal();
         $this->form->fill();
     }
@@ -104,29 +113,30 @@ class Pos extends Page implements HasForms
     public function handleBarcode($barcode)
     {
         $currentTime = time();
-        
+
         $this->modalOpen = true;
-        
+
         $processedBarcodes = session('processed_barcodes', []);
-        
+
         if (isset($processedBarcodes[$barcode])) {
             $lastProcessed = $processedBarcodes[$barcode];
             $timeDiff = $currentTime - $lastProcessed;
-            
+
             if ($timeDiff < 10) {
                 $this->dispatch('scan-complete', [
                     'success' => false,
                     'message' => 'Already processed this barcode',
                     'keep_scanner_open' => true,
-                    'keep_modal_open' => true
+                    'keep_modal_open' => true,
                 ]);
+
                 return;
             }
         }
-        
+
         $processedBarcodes[$barcode] = $currentTime;
         session(['processed_barcodes' => $processedBarcodes]);
-        
+
         $this->lastScannedBarcode = $barcode;
         $this->lastScannedTime = $currentTime;
 
@@ -134,41 +144,41 @@ class Pos extends Page implements HasForms
             ->where('barcode', $barcode)
             ->first();
 
-        if (!$product) {
+        if (! $product) {
             Notification::make()
                 ->title('Product not found')
                 ->danger()
                 ->send();
-            
+
             $this->dispatch('scan-complete', [
                 'success' => false,
                 'message' => 'Product not found',
                 'keep_scanner_open' => true,
-                'keep_modal_open' => true
+                'keep_modal_open' => true,
             ]);
-            
+
             return;
         }
 
         $this->addToCartOnce($product);
-        
+
         $this->dispatch('scan-complete', [
             'success' => true,
             'message' => 'Product added to cart',
             'product' => [
                 'id' => $product->id,
                 'name' => $product->name,
-                'price' => $product->price
+                'price' => $product->price,
             ],
             'keep_scanner_open' => true,
-            'keep_modal_open' => true
+            'keep_modal_open' => true,
         ]);
     }
 
     public function addToCartOnce($product)
     {
         $uniqueId = (string) Str::uuid();
-        
+
         $cartItem = collect($this->cart)->first(function ($item) use ($product) {
             return $item['id'] === $product->id;
         });
@@ -180,6 +190,7 @@ class Pos extends Page implements HasForms
                         $item['quantity'] += 1;
                         $item['subtotal'] = $item['price'] * $item['quantity'];
                     }
+
                     return $item;
                 })
                 ->toArray();
@@ -196,26 +207,26 @@ class Pos extends Page implements HasForms
 
         $this->calculateTotal();
         session(['cart' => $this->cart]);
-        
+
         $this->modalOpen = true;
-        
+
         Notification::make()
             ->title('Product added to cart')
             ->success()
             ->send();
-            
+
         $this->dispatch('cart-updated', [
             'cart_count' => count($this->cart),
             'total' => $this->total,
             'keep_scanner_open' => true,
-            'keep_modal_open' => true
+            'keep_modal_open' => true,
         ]);
     }
 
     public function addToCart($product)
     {
         $uniqueId = (string) Str::uuid();
-        
+
         $cartItem = collect($this->cart)->first(function ($item) use ($product) {
             return $item['id'] === $product->id;
         });
@@ -235,13 +246,13 @@ class Pos extends Page implements HasForms
 
         $this->calculateTotal();
         session(['cart' => $this->cart]);
-        
+
         $this->dispatch('cart-updated', [
             'cart_count' => count($this->cart),
             'total' => $this->total,
-            'keep_scanner_open' => true
+            'keep_scanner_open' => true,
         ]);
-        
+
         Notification::make()
             ->title('Product added to cart')
             ->success()
@@ -269,13 +280,13 @@ class Pos extends Page implements HasForms
 
         $this->calculateTotal();
         session(['cart' => $this->cart]);
-        
+
         $this->dispatch('cart-updated', [
             'cart_count' => count($this->cart),
             'total' => $this->total,
-            'keep_scanner_open' => false
+            'keep_scanner_open' => false,
         ]);
-        
+
         Notification::make()
             ->title('Product removed from cart')
             ->success()
@@ -295,8 +306,10 @@ class Pos extends Page implements HasForms
                             'subtotal' => $item['price'] * $newQuantity,
                         ];
                     }
+
                     return null;
                 }
+
                 return $item;
             })
             ->filter()
@@ -305,11 +318,11 @@ class Pos extends Page implements HasForms
 
         $this->calculateTotal();
         session(['cart' => $this->cart]);
-        
+
         $this->dispatch('cart-updated', [
             'cart_count' => count($this->cart),
             'total' => $this->total,
-            'keep_scanner_open' => true
+            'keep_scanner_open' => true,
         ]);
     }
 
@@ -327,7 +340,7 @@ class Pos extends Page implements HasForms
     {
         $this->validate([
             'payment_method' => 'required',
-            'payment_amount' => 'required|numeric|min:' . $this->total,
+            'payment_amount' => 'required|numeric|min:'.$this->total,
         ]);
 
         $customer = Customer::createDefault();
@@ -379,9 +392,9 @@ class Pos extends Page implements HasForms
         $this->cart = [];
         session()->forget('cart');
         $this->total = 0;
-        
+
         session()->forget('processed_barcodes');
-        
+
         Notification::make()
             ->title('Cart cleared')
             ->success()
@@ -390,7 +403,7 @@ class Pos extends Page implements HasForms
 
     public function searchBarcode()
     {
-        if (!empty($this->scannedBarcode)) {
+        if (! empty($this->scannedBarcode)) {
             $this->handleBarcode($this->scannedBarcode);
             $this->scannedBarcode = '';
         }
@@ -407,9 +420,9 @@ class Pos extends Page implements HasForms
     public function handleModalClosed($data = [])
     {
         $this->modalOpen = false;
-        
+
         session()->forget('temp_scan_session');
-        
+
         if (empty($data['userClosed'])) {
             $this->dispatch('checkScanningState');
         }
