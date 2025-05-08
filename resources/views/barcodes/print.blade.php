@@ -21,7 +21,7 @@
                 page-break-inside: avoid;
             }
             .barcode-label {
-                width: 5cm;
+                width: 8cm;
                 min-height: 2.5cm;
                 margin: 0.2cm;
                 padding: 0.2cm;
@@ -29,13 +29,17 @@
             }
         }
         .barcode-label {
-            width: 5cm;
+            width: 8cm;
             min-height: 2.5cm;
             padding: 0.2cm;
             margin: 0.2cm;
             text-align: center;
             float: left;
             border: 1px solid #ddd;
+        }
+        .barcode-label > div {
+            display: flex;
+            justify-content: center;
         }
     </style>
 </head>
@@ -60,7 +64,7 @@
                 <div class="barcode-container inline-block">
                     <div class="barcode-label rounded">
                         <div class="text-sm font-semibold mb-1">{{ $product->name }}</div>
-                        <div>{!! $barcodes[$product->id] !!}</div>
+                        <div class="flex justify-center">{!! $barcodes[$product->id] !!}</div>
                         <div class="text-xs mt-1">{{ $product->barcode }}</div>
                         <div class="text-sm font-bold mt-1">₱{{ number_format($product->price, 2) }}</div>
                     </div>
@@ -70,7 +74,7 @@
             <div class="barcode-container inline-block">
                 <div class="barcode-label rounded">
                     <div class="text-sm font-semibold mb-1">{{ $product->name }}</div>
-                    <div>{!! $barcode !!}</div>
+                    <div class="flex justify-center">{!! $barcode !!}</div>
                     <div class="text-xs mt-1">{{ $product->barcode }}</div>
                     <div class="text-sm font-bold mt-1">₱{{ number_format($product->price, 2) }}</div>
                 </div>
