@@ -44,6 +44,18 @@ class RoleAndPermissionSeeder extends Seeder
             'create users',
             'edit users',
             'delete users',
+
+            // Supplier permissions
+            'view suppliers',
+            'create suppliers',
+            'edit suppliers',
+            'delete suppliers',
+
+            // Purchase Order permissions
+            'view purchase orders',
+            'create purchase orders',
+            'edit purchase orders',
+            'receive purchase orders',
         ];
 
         // Create or update permissions

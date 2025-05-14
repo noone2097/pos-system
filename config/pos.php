@@ -15,7 +15,6 @@ return [
         'cash' => 'Cash',
         'card' => 'Credit/Debit Card',
         'gcash' => 'GCash',
-        'maya' => 'Maya',
     ],
 
     'receipt' => [
